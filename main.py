@@ -19,5 +19,31 @@ orb = cv2.ORB_create(nfeatures=2000)
 queryKeypoints, queryDescriptors = orb.detectAndCompute(query_img_gray,None)
 trainKeypoints, trainDescriptors = orb.detectAndCompute(train_img_gray,None)
 
-cv2.imshow("Image", train_img_gray)
-cv2.waitKey(0)
+# saving an image
+# cv2.imwrite('traingray.jpg',train_img_gray)
+
+# showing an image using cv2 imshow method
+# cv2.imshow("Image", train_img_gray)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+
+# checking the length of train and query image keypoints
+print(len(queryKeypoints), len(trainKeypoints))
+
+# Initialize the Matcher for matching the keypoints and then match the keypoints
+matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+matches = matcher.match(queryDescriptors,trainDescriptors)
+  
+# draw the matches to the final image
+# containing both the images the drawMatches()
+# function takes both images and keypoints
+# and outputs the matched query image with
+# its train image
+final_img = cv2.drawMatches(query_img, queryKeypoints,
+train_img, trainKeypoints, matches[:100],None)
+  
+final_img = cv2.resize(final_img, (1000,650))
+ 
+# Show the final image
+cv2_imshow(final_img)
+cv2.waitKey(3000)
