@@ -5,8 +5,8 @@ import cv2
 # is what you need to find in train image
 # Save it in the same directory
 # with the name image.jpg 
-query_img = cv2.imread('calculator_1.jpg')
-train_img = cv2.imread('calculator_4.jpg')
+query_img = cv2.imread('calculator_frame1.jpg')
+train_img = cv2.imread('calculator_frame4.jpg')
   
 # Convert it to grayscale
 query_img_bw = cv2.cvtColor(query_img,cv2.COLOR_BGR2GRAY)
