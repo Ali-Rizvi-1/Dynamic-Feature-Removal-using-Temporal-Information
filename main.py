@@ -6,7 +6,6 @@ from sklearn.cluster import KMeans
 import numpy as np
 import math
 
-
 # Read the calculator frame1 as query_img and frame 4 as train image 
 # The features in query image is what you need to find in train image
 
@@ -65,8 +64,8 @@ translation_vectors = []
 for i in matches:
   queryIndex = i.queryIdx
   trainIndex = i.trainIdx 
-  MatchedQueryPoints.append(queryKeypoints[queryIndex].pt)
-  MatchedTrainPoints.append(trainKeypoints[trainIndex].pt)
+  MatchedQueryPoints.append(queryKeypoints[queryIndex])
+  MatchedTrainPoints.append(trainKeypoints[trainIndex])
   translation_vectors.append((trainKeypoints[trainIndex].pt[0] - queryKeypoints[queryIndex].pt[0], trainKeypoints[trainIndex].pt[1] - queryKeypoints[queryIndex].pt[1]))
 
 X_data = []
@@ -79,6 +78,7 @@ for vec in translation_vectors:
 plt.scatter(X_data,Y_data)
 plt.show()
 
+# converting the x and y data into polar coordinates
 R_data = []
 theta_data = []
 list_polarCoordinates = []
@@ -97,3 +97,46 @@ plt.show()
 data_array = np.array(list_polarCoordinates)
 plt.scatter(data_array[:, 0], data_array[:, 1], s=50);
 plt.show()
+
+# k-mean clustering
+kmeans = KMeans(n_clusters=2)
+kmeans.fit(data_array)
+y_kmeans = kmeans.predict(data_array)
+
+# plotting polar coordinates after clustering
+fig = plt.figure()
+plt.scatter(data_array[:, 0], data_array[:, 1], c=y_kmeans, s=50, cmap='viridis')
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5);
+plt.show()
+# save plot to file
+fig.savefig('kmean_clustering.png')
+
+# finding the class object with more points
+n = [0,0]
+for i in y_kmeans:
+  n[i] +=1
+
+max_value = max(n)
+max_index = n.index(max_value)
+
+selected_keypoints = []
+selected_descriptors = []
+
+for i in range(len(y_kmeans)):
+  if y_kmeans[i] == max_index:
+    trainIndex = matches[i].trainIdx
+    selected_keypoints.append(trainKeypoints[trainIndex])
+    #selected_descriptors.append(trainDescriptors[trainIndex])
+
+# plotting the matched feature points on the current image frame
+trainImg_Matchedfeatures = cv2.drawKeypoints(train_img, MatchedTrainPoints, np.array([]), (0,0,255), 4)
+cv2.imshow("Image", trainImg_Matchedfeatures)
+cv2.waitKey(3000)
+cv2.destroyAllWindows()
+
+# plotting the selected feature points on the current image frame
+trainImg_Selectedfeatures = cv2.drawKeypoints(train_img, selected_keypoints, np.array([]), (0,0,255), 4)
+cv2.imshow("Image", trainImg_Selectedfeatures)
+cv2.waitKey(3000)
+cv2.destroyAllWindows()
