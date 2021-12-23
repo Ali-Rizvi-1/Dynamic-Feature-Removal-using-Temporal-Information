@@ -1,4 +1,11 @@
 import cv2
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-whitegrid')
+import seaborn as sns; sns.set()  # for plot styling
+from sklearn.cluster import KMeans
+import numpy as np
+import math
+
 
 # Read the calculator frame1 as query_img and frame 4 as train image 
 # The features in query image is what you need to find in train image
@@ -42,9 +49,51 @@ train_img, trainKeypoints, matches[:100],None)
 final_img = cv2.resize(final_img, (1000,650))
 
 # saving an image
-cv2.imwrite('FeatureMatchesImage.jpg',final_img)
+# cv2.imwrite('FeatureMatchesImage.jpg',final_img)
 
 # # Show the final image
 # cv2.imshow("Image", final_img)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
+
+print(len(matches))
+
+# computing the feature translations in the form of vectors
+MatchedQueryPoints = []
+MatchedTrainPoints = []
+translation_vectors = []
+for i in matches:
+  queryIndex = i.queryIdx
+  trainIndex = i.trainIdx 
+  MatchedQueryPoints.append(queryKeypoints[queryIndex].pt)
+  MatchedTrainPoints.append(trainKeypoints[trainIndex].pt)
+  translation_vectors.append((trainKeypoints[trainIndex].pt[0] - queryKeypoints[queryIndex].pt[0], trainKeypoints[trainIndex].pt[1] - queryKeypoints[queryIndex].pt[1]))
+
+X_data = []
+Y_data = []
+for vec in translation_vectors:
+    X_data.append(vec[0])
+    Y_data.append(vec[1])
+
+# plotting the x data and y data as a scatter plot
+plt.scatter(X_data,Y_data)
+plt.show()
+
+R_data = []
+theta_data = []
+list_polarCoordinates = []
+
+for i in range(len(X_data)):
+  R_data.append((X_data[i]**2+Y_data[i]**2)**0.5)
+  if X_data[i] == 0:
+    theta_data.append((math.pi)/2) 
+  else:
+    theta_data.append(math.atan(Y_data[i]/X_data[i]))
+  list_polarCoordinates.append([theta_data[-1],R_data[-1]])
+
+plt.scatter(theta_data,R_data)
+plt.show()
+
+data_array = np.array(list_polarCoordinates)
+plt.scatter(data_array[:, 0], data_array[:, 1], s=50);
+plt.show()
