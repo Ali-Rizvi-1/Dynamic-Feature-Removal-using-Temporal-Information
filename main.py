@@ -19,9 +19,6 @@ orb = cv2.ORB_create(nfeatures=2000)
 queryKeypoints, queryDescriptors = orb.detectAndCompute(query_img_gray,None)
 trainKeypoints, trainDescriptors = orb.detectAndCompute(train_img_gray,None)
 
-# saving an image
-# cv2.imwrite('traingray.jpg',train_img_gray)
-
 # showing an image using cv2 imshow method
 # cv2.imshow("Image", train_img_gray)
 # cv2.waitKey(0)
@@ -43,7 +40,11 @@ final_img = cv2.drawMatches(query_img, queryKeypoints,
 train_img, trainKeypoints, matches[:100],None)
   
 final_img = cv2.resize(final_img, (1000,650))
- 
-# Show the final image
-cv2_imshow(final_img)
-cv2.waitKey(3000)
+
+# saving an image
+cv2.imwrite('FeatureMatchesImage.jpg',final_img)
+
+# # Show the final image
+# cv2.imshow("Image", final_img)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
