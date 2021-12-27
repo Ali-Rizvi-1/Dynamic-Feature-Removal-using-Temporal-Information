@@ -99,7 +99,7 @@ plt.scatter(data_array[:, 0], data_array[:, 1], s=50);
 plt.show()
 
 # k-mean clustering
-kmeans = KMeans(n_clusters=2)
+kmeans = KMeans(n_clusters=3)
 kmeans.fit(data_array)
 y_kmeans = kmeans.predict(data_array)
 
@@ -112,31 +112,45 @@ plt.show()
 # save plot to file
 fig.savefig('kmean_clustering.png')
 
-# finding the class object with more points
-n = [0,0]
-for i in y_kmeans:
-  n[i] +=1
+# centers = kmeans.cluster_centers_
 
-max_value = max(n)
-max_index = n.index(max_value)
+find = []
+
+for mean_point in centers:
+  find.append(mean_point[1])
+
+min_center = min(find)
+# print(min_center)
+min_index = find.index(min_center)
+# print(min_index)
+
+# finding the class object with more points
+# n = [0,0]
+# for i in y_kmeans:
+#   n[i] +=1
+
+# max_value = max(n)
+# max_index = n.index(max_value)
 
 selected_keypoints = []
 selected_descriptors = []
 
 for i in range(len(y_kmeans)):
-  if y_kmeans[i] == max_index:
+  if y_kmeans[i] == min_index:
     trainIndex = matches[i].trainIdx
     selected_keypoints.append(trainKeypoints[trainIndex])
     #selected_descriptors.append(trainDescriptors[trainIndex])
 
 # plotting the matched feature points on the current image frame
 trainImg_Matchedfeatures = cv2.drawKeypoints(train_img, MatchedTrainPoints, np.array([]), (0,0,255), 4)
+cv2.imwrite('ImagewithDynamicFeatures.jpg',trainImg_Matchedfeatures)
 cv2.imshow("Image", trainImg_Matchedfeatures)
 cv2.waitKey(3000)
 cv2.destroyAllWindows()
 
 # plotting the selected feature points on the current image frame
 trainImg_Selectedfeatures = cv2.drawKeypoints(train_img, selected_keypoints, np.array([]), (0,0,255), 4)
+cv2.imwrite('ImagewithRemovedDynamic.jpg',trainImg_Selectedfeatures)
 cv2.imshow("Image", trainImg_Selectedfeatures)
 cv2.waitKey(3000)
 cv2.destroyAllWindows()
