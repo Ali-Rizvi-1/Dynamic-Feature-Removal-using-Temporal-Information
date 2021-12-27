@@ -1,3 +1,4 @@
+# all the imports 
 import cv2
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
@@ -37,11 +38,8 @@ print(len(queryKeypoints), len(trainKeypoints))
 matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 matches = matcher.match(queryDescriptors,trainDescriptors)
   
-# draw the matches to the final image
-# containing both the images the drawMatches()
-# function takes both images and keypoints
-# and outputs the matched query image with
-# its train image
+# draw the matches to the final image containing both the images the drawMatches()
+# function takes both images and keypoints and outputs the matched query image with its train image
 final_img = cv2.drawMatches(query_img, queryKeypoints,
 train_img, trainKeypoints, matches[:100],None)
   
@@ -50,12 +48,7 @@ final_img = cv2.resize(final_img, (1000,650))
 # saving an image
 # cv2.imwrite('FeatureMatchesImage.jpg',final_img)
 
-# # Show the final image
-# cv2.imshow("Image", final_img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-print(len(matches))
+print("Total matched features in the two frames are",len(matches))
 
 # computing the feature translations in the form of vectors
 MatchedQueryPoints = []
@@ -95,8 +88,6 @@ plt.scatter(theta_data,R_data)
 plt.show()
 
 data_array = np.array(list_polarCoordinates)
-plt.scatter(data_array[:, 0], data_array[:, 1], s=50);
-plt.show()
 
 # k-mean clustering
 kmeans = KMeans(n_clusters=3)
@@ -112,25 +103,12 @@ plt.show()
 # save plot to file
 fig.savefig('kmean_clustering.png')
 
-# centers = kmeans.cluster_centers_
-
+# finding the center with lowest radius value to identify the static feature points in the frame
 find = []
-
 for mean_point in centers:
   find.append(mean_point[1])
-
 min_center = min(find)
-# print(min_center)
 min_index = find.index(min_center)
-# print(min_index)
-
-# finding the class object with more points
-# n = [0,0]
-# for i in y_kmeans:
-#   n[i] +=1
-
-# max_value = max(n)
-# max_index = n.index(max_value)
 
 selected_keypoints = []
 selected_descriptors = []
